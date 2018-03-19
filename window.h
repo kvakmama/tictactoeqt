@@ -17,4 +17,4 @@ public slots:
 };
 
 #endif // WINDOW_H
-QString a,QString b,QString c
+//QString a,QString b,QString c

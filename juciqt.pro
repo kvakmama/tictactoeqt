@@ -11,3 +11,6 @@ SOURCES += main.cpp \
 HEADERS += \
     window.h \
     button.h
+
+DISTFILES += \
+    todo.txt

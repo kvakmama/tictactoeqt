@@ -1,0 +1,14 @@
+window.h -> button matrix
+button-re mutato pointert tegyunk a matrixba, ne buttont
+(mat[i][j] = new Button...)
+
+igy mar meg tudjuk nezni a gameoverben, hogy a, van-e meg megnyomhato gomb, b, nyert-e valaki
+a gameovert igy eleg a buttonClicked slotbol meghivni
+
+
+a Window-beli Button* mat[3][3] az analogiaja a game-beli int mat[3][3] matrixnak
+
+
+a Window az a korabbi Game
+neki is kell egy init() meg egy find_winner() meg egy game_over()
+csak most nem egy kulso game_loop hajtja meg, hanem a Button clicked() signalok, illetve amit ezek meghivnak, a buttonClicked() slot

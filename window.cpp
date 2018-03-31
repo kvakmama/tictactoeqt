@@ -1,33 +1,101 @@
 #include "window.h"
 #include <QPushButton>
 #include <iostream>
+#include <QGridLayout>
+#include <QMessageBox>
+#include <QPalette>
 using namespace std;
 Window::Window(QWidget *parent) : QWidget(parent)
 {
-
+    QGridLayout* layout(new QGridLayout);
+    setLayout(layout);
+    for (int i = 0; i != 3; ++i)
+    {
+       for (int j = 0; j != 3; ++j)
+       {
+            QPushButton* pb = new QPushButton;
+            pb->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
+            layout->addWidget(pb,i,j);
+            connect(pb, SIGNAL(clicked(bool)), this, SLOT(buttonClicked()));
+            QFont font = pb->font();
+            font.setPointSize(33);
+            pb->setFont(font);
+            mButtons[i][j]=pb;
+       }
+    }
+    UpdateUI();
 }
 
-int counter = 0;
+void Window::UpdateUI()
+{
+    for (int i = 0; i != 3; ++i)
+    {
+       for (int j = 0; j != 3; ++j)
+       {
+            QPushButton* pb = mButtons[i][j];
+            int state = mGame.get_elem(game::input{i,j});
+            QPalette qpal = pb->palette();
+            qpal.setColor(QPalette::ButtonText, Qt::black);
+            if (state == 0)
+            {
+                pb->setEnabled(true);
+                pb->setText("");
+                qpal.setColor(QPalette::Button,Qt::gray);
+            }
+            else if (state == 1)
+            {
+                pb->setEnabled(false);
+                pb->setText("X");
+                qpal.setColor(QPalette::Button,Qt::cyan);
+            }
+            else if (state == 2)
+            {
+                pb->setEnabled(false);
+                pb->setText("O");
+                qpal.setColor(QPalette::Button,Qt::magenta);
+            }
+            pb->setPalette(qpal);
+       }
+    }
+}
 
 void Window::buttonClicked()
 {
     QPushButton* pb(qobject_cast<QPushButton*>(sender()));
     if (pb)
     {
-        counter ++;
-        if (counter % 2 == 0)
-            pb->setText("O");
-        else
-            pb->setText("X");
-        pb->setEnabled(false);
+        for (int i=0; i!=3; ++i)
+        {
+            for (int j=0; j!=3; ++j)
+            {
+                if (mButtons[i][j] == pb)
+                {
+                    game::input inp{i,j};
+                    mGame.process_input(inp);
+                }
+            }
+        }
+    }
+    UpdateUI();
+    if (mGame.game_over())
+    {
+        GameOver();
     }
 }
 
-void Window::GameOver(QString a,QString b,QString c)
+void Window::GameOver()
 {
-    QPushButton* pb(qobject_cast<QPushButton*>(sender()));
-    if (a == b && a == c)
+    int winner = mGame.find_winner();
+    QString message;
+    if (winner == 0)
     {
-        pb->setText("WIN");
+        message = "Draw";
     }
+    else
+    {
+        message = QString("player %1 won").arg(winner);
+    }
+    QMessageBox::information(nullptr,"Game Over",message);
+    mGame.init();
+    UpdateUI();
 }

@@ -34,27 +34,26 @@ void Window::UpdateUI()
        {
             QPushButton* pb = mButtons[i][j];
             int state = mGame.get_elem(game::input{i,j});
-            QPalette qpal = pb->palette();
-            qpal.setColor(QPalette::ButtonText, Qt::black);
+            QString color;
             if (state == 0)
             {
                 pb->setEnabled(true);
                 pb->setText("");
-                qpal.setColor(QPalette::Button,Qt::gray);
+                color = "gray";
             }
             else if (state == 1)
             {
                 pb->setEnabled(false);
                 pb->setText("X");
-                qpal.setColor(QPalette::Button,Qt::cyan);
+                color = "cyan";
             }
             else if (state == 2)
             {
                 pb->setEnabled(false);
                 pb->setText("O");
-                qpal.setColor(QPalette::Button,Qt::magenta);
+                color = "magenta";
             }
-            pb->setPalette(qpal);
+            pb->setStyleSheet("color:black; background-color:"+color);
        }
     }
 }
